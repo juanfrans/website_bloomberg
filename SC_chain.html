@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<script src="//use.typekit.net/ndx7bht.js"></script>
+		<script>try{Typekit.load();}catch(e){}</script>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script type="text/javascript" src="p5/p5.js"></script>
+		<style>
+			html, body{
+				margin: 0;
+				padding: 0;
+				background: #333333;
+			}
+		</style>
+	</head>
+	<script type="text/javascript">
+
+	// Global variables
+	var WIDTH = 1200;
+	var HEIGHT = 2000;
+	var maxValue = 0;
+	var maxRectLength = 500;
+	var rectHeight = 8;
+	var drawValues = [];
+	var spaceBetween = 15;
+
+	function preload(){
+		console.log('Starting the loading process...')
+		suppliersTable = loadTable('data/05_Supplier_MarketCap.csv');
+		customersTable = loadTable('data/04_Customer_Data_Formatted.csv');
+		console.log('Done loading base data...');
+	}
+
+	function setup(){
+		console.log('Starting the setup...');
+		createCanvas(WIDTH, HEIGHT);
+		colorMode(HSB, 360, 100, 100, 100);
+		textFont("din-condensed-web")
+
+		// Calculate maximum value
+		for (var i = 1; i < suppliersTable.getRowCount(); i++) {
+			if (suppliersTable.getColumn(4)[i] != 'N/A'){
+				maxValue = max(suppliersTable.getColumn(4)[i], maxValue);
+			}
+			else {
+			}
+		};
+
+		// Calculate initial draw values
+		for (var i = 1; i < suppliersTable.getRowCount(); i++) {
+			drawValues[i-1] = map(suppliersTable.getColumn(4)[i], 0, maxValue, 0, maxRectLength);
+		};
+		console.log(drawValues);
+	}
+
+	function draw(){
+		background(360, 0, 20);
+		fill(0, 0, 100);
+		noStroke();
+		for (var i = 0; i < drawValues.length; i++){
+			rect(105, 10 + spaceBetween * i, drawValues[i], rectHeight);
+		};
+		textSize(10);
+		textAlign(RIGHT);
+		for (var i = 1; i < suppliersTable.getRowCount(); i++) {
+			text(suppliersTable.getColumn(1)[i], 100, 17 + spaceBetween * (i-1));
+		};
+		textAlign(LEFT);
+		for (var i = 1; i < suppliersTable.getRowCount(); i++) {
+			if (suppliersTable.getColumn(4)[i] > 999){
+				text((int(suppliersTable.getColumn(4)[i])/100)+' B', 110 + drawValues[i-1], 17 + spaceBetween * (i-1));
+			}
+			else if (suppliersTable.getColumn(4)[i] == 'N/A'){
+				text('N/A', 110, 17 + spaceBetween * (i-1));
+			}
+			else {
+				text(int(suppliersTable.getColumn(4)[i])+' M', 110 + drawValues[i-1], 17 + spaceBetween * (i-1));
+			}
+		};
+	}
+
+	</script>
+</html>
