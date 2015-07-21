@@ -34,11 +34,16 @@
 	var mainButtonsY = 20;
 	var secondaryPosition = 0;
 	var secondaryButtonsY = 50;
+	var selectedCompany = 0;
 
 	function preload(){
 		console.log('Starting the loading process...')
-		suppliersTable = loadTable('data/05_Supplier_MarketCap.csv');
-		customersTable = loadTable('data/05_Customer_MarketCap.csv');
+		suppliersMarketCapTable = loadTable('data/05_Supplier_MarketCap.csv');
+		suppliersPercCostTable = loadTable('data/05_Supplier_PercCost.csv');
+		suppliersPercRevTable = loadTable('data/05_Supplier_PercRev.csv');
+		customersMarketCapTable = loadTable('data/05_Customer_MarketCap.csv');
+		customerPercCostTable = loadTable('data/05_Customer_PercCost.csv');
+		customerPercRevTable = loadTable('data/05_Customer_PercRev.csv');
 		console.log('Done loading base data...');
 	}
 
@@ -49,19 +54,19 @@
 		textFont("din-condensed-web")
 
 		// Calculate maximum value
-		for (var i = 1; i < suppliersTable.getRowCount(); i++) {
-			if (suppliersTable.getColumn(4)[i] != 'N/A'){
-				maxValue = max(suppliersTable.getColumn(4)[i], maxValue);
+		for (var i = 1; i < suppliersMarketCapTable.getRowCount(); i++) {
+			if (suppliersMarketCapTable.getColumn(4)[i] != 'N/A'){
+				maxValue = max(suppliersMarketCapTable.getColumn(4)[i], maxValue);
 			}
 			else {
 			}
 		};
 
 		// Calculate initial draw values
-		for (var i = 1; i < suppliersTable.getRowCount(); i++) {
-			drawValues[i-1] = map(suppliersTable.getColumn(4)[i], 0, maxValue, 0, maxRectLength);
-			drawNames[i-1] = suppliersTable.getColumn(1)[i];
-			drawNumbers[i-1] = suppliersTable.getColumn(4)[i];
+		for (var i = 1; i < suppliersMarketCapTable.getRowCount(); i++) {
+			drawValues[i-1] = map(suppliersMarketCapTable.getColumn(4)[i], 0, maxValue, 0, maxRectLength);
+			drawNames[i-1] = suppliersMarketCapTable.getColumn(1)[i];
+			drawNumbers[i-1] = suppliersMarketCapTable.getColumn(4)[i];
 		};
 	}
 
@@ -108,10 +113,20 @@
 
 	function draw(){
 		background(360, 0, 20);
-
 		drawButtons();
 		checkHover();
+		drawMainGraph();
+		selectCompany();
+	}
 
+	function selectCompany(){
+		noFill();
+		stroke(0, 0, 100);
+		strokeWeight(1);
+		rect(marginX, startDataY - 4 + selectedCompany * spaceBetween, marginX + maxRectLength + 105, rectHeight + 7);
+	}
+
+	function drawMainGraph(){
 		fill(0, 0, 100);
 		noStroke();
 		for (var i = 0; i < drawValues.length; i++){
@@ -130,6 +145,9 @@
 			else if (drawNumbers[i] == 'N/A'){
 				text('N/A', 110, startDataY + 7 + spaceBetween * (i));
 			}
+			else if (drawNumbers[i] < 1){
+				text(nfc(drawNumbers[i] * 100, 2) + '%', 110 + drawValues[i], startDataY + 7 + spaceBetween * i);
+			}
 			else {
 				text(int(drawNumbers[i])+' M', 110 + drawValues[i], startDataY + 7 + spaceBetween * (i));
 			}
@@ -139,32 +157,92 @@
 	function calculateValues(){
 		maxValue = 0;
 		if (suppliers){
-			for (var i = 1; i < suppliersTable.getRowCount(); i++) {
-				if (suppliersTable.getColumn(4)[i] != 'N/A'){
-					maxValue = max(suppliersTable.getColumn(4)[i], maxValue);
-				}
-				else {
-				}
-			};
-			for (var i = 1; i < suppliersTable.getRowCount(); i++) {
-				drawValues[i-1] = map(suppliersTable.getColumn(4)[i], 0, maxValue, 0, maxRectLength);
-				drawNames[i-1] = suppliersTable.getColumn(1)[i];
-				drawNumbers[i-1] = suppliersTable.getColumn(4)[i];
-			};
+			if (secondaryPosition == 0){
+				for (var i = 1; i < suppliersMarketCapTable.getRowCount(); i++) {
+					if (suppliersMarketCapTable.getColumn(4)[i] != 'N/A'){
+						maxValue = max(suppliersMarketCapTable.getColumn(4)[i], maxValue);
+					}
+					else {
+					}
+				};
+				for (var i = 1; i < suppliersMarketCapTable.getRowCount(); i++) {
+					drawValues[i-1] = map(suppliersMarketCapTable.getColumn(4)[i], 0, maxValue, 0, maxRectLength);
+					drawNames[i-1] = suppliersMarketCapTable.getColumn(1)[i];
+					drawNumbers[i-1] = suppliersMarketCapTable.getColumn(4)[i];
+				};
+			}
+			else if (secondaryPosition == 1){
+				for (var i = 1; i < suppliersPercCostTable.getRowCount(); i++) {
+					if (suppliersPercCostTable.getColumn(6)[i] != 'N/A'){
+						maxValue = max(suppliersPercCostTable.getColumn(6)[i], maxValue);
+					}
+					else {
+					}
+				};
+				for (var i = 1; i < suppliersPercCostTable.getRowCount(); i++) {
+					drawValues[i-1] = map(suppliersPercCostTable.getColumn(6)[i], 0, maxValue, 0, maxRectLength);
+					drawNames[i-1] = suppliersPercCostTable.getColumn(1)[i];
+					drawNumbers[i-1] = suppliersPercCostTable.getColumn(6)[i];
+				};
+			}
+			else {
+				for (var i = 1; i < suppliersPercRevTable.getRowCount(); i++) {
+					if (suppliersPercRevTable.getColumn(5)[i] != 'N/A'){
+						maxValue = max(suppliersPercRevTable.getColumn(5)[i], maxValue);
+					}
+					else {
+					}
+				};
+				for (var i = 1; i < suppliersPercRevTable.getRowCount(); i++) {
+					drawValues[i-1] = map(suppliersPercRevTable.getColumn(5)[i], 0, maxValue, 0, maxRectLength);
+					drawNames[i-1] = suppliersPercRevTable.getColumn(1)[i];
+					drawNumbers[i-1] = suppliersPercRevTable.getColumn(5)[i];
+				};
+			}
 		}
 		else {
-			for (var i = 1; i < customersTable.getRowCount(); i++) {
-				if (customersTable.getColumn(4)[i] != 'N/A'){
-					maxValue = max(customersTable.getColumn(4)[i], maxValue);
-				}
-				else {
-				}
-			};
-			for (var i = 1; i < customersTable.getRowCount(); i++) {
-				drawValues[i-1] = map(customersTable.getColumn(4)[i], 0, maxValue, 0, maxRectLength);
-				drawNames[i-1] = customersTable.getColumn(1)[i];
-				drawNumbers[i-1] = customersTable.getColumn(4)[i];
-			};
+			if (secondaryPosition == 0){
+				for (var i = 1; i < customersMarketCapTable.getRowCount(); i++) {
+					if (customersMarketCapTable.getColumn(4)[i] != 'N/A'){
+						maxValue = max(customersMarketCapTable.getColumn(4)[i], maxValue);
+					}
+					else {
+					}
+				};
+				for (var i = 1; i < customersMarketCapTable.getRowCount(); i++) {
+					drawValues[i-1] = map(customersMarketCapTable.getColumn(4)[i], 0, maxValue, 0, maxRectLength);
+					drawNames[i-1] = customersMarketCapTable.getColumn(1)[i];
+					drawNumbers[i-1] = customersMarketCapTable.getColumn(4)[i];
+				};
+			}
+			else if (secondaryPosition == 1){
+				for (var i = 1; i < customerPercCostTable.getRowCount(); i++) {
+					if (customerPercCostTable.getColumn(6)[i] != 'N/A'){
+						maxValue = max(customerPercCostTable.getColumn(6)[i], maxValue);
+					}
+					else {
+					}
+				};
+				for (var i = 1; i < customerPercCostTable.getRowCount(); i++) {
+					drawValues[i-1] = map(customerPercCostTable.getColumn(6)[i], 0, maxValue, 0, maxRectLength);
+					drawNames[i-1] = customerPercCostTable.getColumn(1)[i];
+					drawNumbers[i-1] = customerPercCostTable.getColumn(6)[i];
+				};
+			}
+			else {
+				for (var i = 1; i < customerPercRevTable.getRowCount(); i++) {
+					if (customerPercRevTable.getColumn(5)[i] != 'N/A'){
+						maxValue = max(customerPercRevTable.getColumn(5)[i], maxValue);
+					}
+					else {
+					}
+				};
+				for (var i = 1; i < customerPercRevTable.getRowCount(); i++) {
+					drawValues[i-1] = map(customerPercRevTable.getColumn(5)[i], 0, maxValue, 0, maxRectLength);
+					drawNames[i-1] = customerPercRevTable.getColumn(1)[i];
+					drawNumbers[i-1] = customerPercRevTable.getColumn(5)[i];
+				};
+			}
 		}
 	}
 
@@ -172,32 +250,40 @@
 		if (marginX < mouseX && mouseX < marginX + buttonWidth && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight){
 			suppliers = true;
 			calculateValues();
+			selectedCompany = 0;
 			console.log('suppliers');
 		}
 		if (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 20 && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight){
 			suppliers = false;
 			calculateValues();
+			selectedCompany = 0;
 			console.log('customers');
 		}
 		if (marginX < mouseX && mouseX < marginX + buttonWidth && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight){
 			secondaryPosition = 0;
 			calculateValues();
+			selectedCompany = 0;
 			console.log('market cap');
 		}
 		if (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 10 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight){
 			secondaryPosition = 1;
 			calculateValues();
+			selectedCompany = 0;
 			console.log('percent cost');
 		}
 		if (marginX + buttonWidth * 2 + 20 < mouseX && mouseX < marginX + buttonWidth * 3 + 20 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight){
 			secondaryPosition = 2;
 			calculateValues();
+			selectedCompany = 0;
 			console.log('percent revenue');
+		}
+		if (marginX < mouseX && mouseX < marginX + marginX + maxRectLength + 105 && startDataY - 4 < mouseY && mouseY < startDataY + spaceBetween * 100){
+			selectedCompany = floor((mouseY - startDataY) / spaceBetween);
 		}
 	}
 
 	function checkHover(){
-		if ((marginX < mouseX && mouseX < marginX + buttonWidth && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight) || (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 20 && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight) || (marginX < mouseX && mouseX < marginX + buttonWidth && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 10 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX + buttonWidth * 2 + 20 < mouseX && mouseX < marginX + buttonWidth * 3 + 20 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight)){
+		if ((marginX < mouseX && mouseX < marginX + buttonWidth && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight) || (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 20 && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight) || (marginX < mouseX && mouseX < marginX + buttonWidth && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 10 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX + buttonWidth * 2 + 20 < mouseX && mouseX < marginX + buttonWidth * 3 + 20 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX < mouseX && mouseX < marginX + marginX + maxRectLength + 105 && startDataY - 4 < mouseY && mouseY < startDataY + spaceBetween * 100)){
 			cursor(HAND);
 		}
 		else {
