@@ -35,6 +35,11 @@
 	var secondaryPosition = 0;
 	var secondaryButtonsY = 50;
 	var selectedCompany = 0;
+	var marketCap = [];
+	var percentCost = [];
+	var percentRevenue = [];
+	var country = [];
+	var industry = [];
 
 	function preload(){
 		console.log('Starting the loading process...')
@@ -67,6 +72,11 @@
 			drawValues[i-1] = map(suppliersMarketCapTable.getColumn(4)[i], 0, maxValue, 0, maxRectLength);
 			drawNames[i-1] = suppliersMarketCapTable.getColumn(1)[i];
 			drawNumbers[i-1] = suppliersMarketCapTable.getColumn(4)[i];
+			marketCap[i-1] = suppliersMarketCapTable.getColumn(4)[i];
+			percentCost[i-1] = suppliersMarketCapTable.getColumn(6)[i];
+			percentRevenue[i-1] = suppliersMarketCapTable.getColumn(5)[i];
+			country[i-1] = suppliersMarketCapTable.getColumn(2)[i];
+			industry[i-1] = suppliersMarketCapTable.getColumn(3)[i];
 		};
 	}
 
@@ -124,6 +134,38 @@
 		stroke(0, 0, 100);
 		strokeWeight(1);
 		rect(marginX, startDataY - 4 + selectedCompany * spaceBetween, marginX + maxRectLength + 105, rectHeight + 7);
+		fill(0, 0, 100);
+		noStroke();
+		textSize(12);
+		textAlign(LEFT);
+		text('Company', 700, startDataY + 7);
+		//text('Type', 900, startDataY + 7);
+		text('Country', 700, startDataY + 50);
+		text('Industry', 900, startDataY + 50);
+		text('Market Cap', 700, startDataY + 93);
+		text('Percent Cost', 900, startDataY + 93);
+		text('Percent Revenue', 1100, startDataY + 93);
+		textSize(24);
+		text(drawNames[selectedCompany], 700, startDataY + 30);
+		/* if (suppliers) {
+			text('Supplier', 900, startDataY + 30);
+		}
+		else {
+			text('Customer', 900, startDataY + 30);
+		} */
+		text(country[selectedCompany], 700, startDataY + 73);
+		text(industry[selectedCompany], 900, startDataY + 73);
+		if (marketCap[selectedCompany] > 999){
+			text((int(marketCap[selectedCompany])/100)+' Billions', 700, startDataY + 116);
+		}
+		else if (marketCap[selectedCompany] == 'N/A'){
+			text('N/A', 700, startDataY + 116);
+		}
+		else {
+			text(int(marketCap[selectedCompany])+' Millions', 700, startDataY + 116);
+		}
+		text(nfc(percentCost[selectedCompany] * 100, 2) + '%', 900, startDataY + 116);
+		text(nfc(percentRevenue[selectedCompany] * 100, 2) + '%', 1100, startDataY + 116);
 	}
 
 	function drawMainGraph(){
@@ -169,6 +211,11 @@
 					drawValues[i-1] = map(suppliersMarketCapTable.getColumn(4)[i], 0, maxValue, 0, maxRectLength);
 					drawNames[i-1] = suppliersMarketCapTable.getColumn(1)[i];
 					drawNumbers[i-1] = suppliersMarketCapTable.getColumn(4)[i];
+					marketCap[i-1] = suppliersMarketCapTable.getColumn(4)[i];
+					percentCost[i-1] = suppliersMarketCapTable.getColumn(6)[i];
+					percentRevenue[i-1] = suppliersMarketCapTable.getColumn(5)[i];
+					country[i-1] = suppliersMarketCapTable.getColumn(2)[i];
+					industry[i-1] = suppliersMarketCapTable.getColumn(3)[i];
 				};
 			}
 			else if (secondaryPosition == 1){
@@ -183,6 +230,11 @@
 					drawValues[i-1] = map(suppliersPercCostTable.getColumn(6)[i], 0, maxValue, 0, maxRectLength);
 					drawNames[i-1] = suppliersPercCostTable.getColumn(1)[i];
 					drawNumbers[i-1] = suppliersPercCostTable.getColumn(6)[i];
+					marketCap[i-1] = suppliersPercCostTable.getColumn(4)[i];
+					percentCost[i-1] = suppliersPercCostTable.getColumn(6)[i];
+					percentRevenue[i-1] = suppliersPercCostTable.getColumn(5)[i];
+					country[i-1] = suppliersPercCostTable.getColumn(2)[i];
+					industry[i-1] = suppliersPercCostTable.getColumn(3)[i];
 				};
 			}
 			else {
@@ -197,6 +249,11 @@
 					drawValues[i-1] = map(suppliersPercRevTable.getColumn(5)[i], 0, maxValue, 0, maxRectLength);
 					drawNames[i-1] = suppliersPercRevTable.getColumn(1)[i];
 					drawNumbers[i-1] = suppliersPercRevTable.getColumn(5)[i];
+					marketCap[i-1] = suppliersPercRevTable.getColumn(4)[i];
+					percentCost[i-1] = suppliersPercRevTable.getColumn(6)[i];
+					percentRevenue[i-1] = suppliersPercRevTable.getColumn(5)[i];
+					country[i-1] = suppliersPercRevTable.getColumn(2)[i];
+					industry[i-1] = suppliersPercRevTable.getColumn(3)[i];
 				};
 			}
 		}
@@ -213,6 +270,11 @@
 					drawValues[i-1] = map(customersMarketCapTable.getColumn(4)[i], 0, maxValue, 0, maxRectLength);
 					drawNames[i-1] = customersMarketCapTable.getColumn(1)[i];
 					drawNumbers[i-1] = customersMarketCapTable.getColumn(4)[i];
+					marketCap[i-1] = customersMarketCapTable.getColumn(4)[i];
+					percentCost[i-1] = customersMarketCapTable.getColumn(6)[i];
+					percentRevenue[i-1] = customersMarketCapTable.getColumn(5)[i];
+					country[i-1] = customersMarketCapTable.getColumn(2)[i];
+					industry[i-1] = customersMarketCapTable.getColumn(3)[i];
 				};
 			}
 			else if (secondaryPosition == 1){
@@ -227,6 +289,11 @@
 					drawValues[i-1] = map(customerPercCostTable.getColumn(6)[i], 0, maxValue, 0, maxRectLength);
 					drawNames[i-1] = customerPercCostTable.getColumn(1)[i];
 					drawNumbers[i-1] = customerPercCostTable.getColumn(6)[i];
+					marketCap[i-1] = customerPercCostTable.getColumn(4)[i];
+					percentCost[i-1] = customerPercCostTable.getColumn(6)[i];
+					percentRevenue[i-1] = customerPercCostTable.getColumn(5)[i];
+					country[i-1] = customerPercCostTable.getColumn(2)[i];
+					industry[i-1] = customerPercCostTable.getColumn(3)[i];
 				};
 			}
 			else {
@@ -241,6 +308,11 @@
 					drawValues[i-1] = map(customerPercRevTable.getColumn(5)[i], 0, maxValue, 0, maxRectLength);
 					drawNames[i-1] = customerPercRevTable.getColumn(1)[i];
 					drawNumbers[i-1] = customerPercRevTable.getColumn(5)[i];
+					marketCap[i-1] = customerPercRevTable.getColumn(4)[i];
+					percentCost[i-1] = customerPercRevTable.getColumn(6)[i];
+					percentRevenue[i-1] = customerPercRevTable.getColumn(5)[i];
+					country[i-1] = customerPercRevTable.getColumn(2)[i];
+					industry[i-1] = customerPercRevTable.getColumn(3)[i];
 				};
 			}
 		}
