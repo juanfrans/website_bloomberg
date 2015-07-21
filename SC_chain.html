@@ -32,6 +32,8 @@
 	var buttonHeight = 25;
 	var suppliers = true;
 	var mainButtonsY = 20;
+	var secondaryPosition = 0;
+	var secondaryButtonsY = 50;
 
 	function preload(){
 		console.log('Starting the loading process...')
@@ -64,27 +66,44 @@
 	}
 
 	function drawButtons(){
+		// Main buttons
+		var position = 0;
+		if (suppliers){
+			position = 0;
+		}
+		else {
+			position = 1;
+		}
+		fill(0, 0, 30);
+		noStroke();
+		rect(marginX + (buttonWidth + 10) * position, mainButtonsY, buttonWidth, buttonHeight);
+		noFill();
 		stroke(0, 0, 100);
 		strokeWeight(1);
-		if (suppliers){
-			fill(0, 0, 30);
-		}
-		else {
-			noFill();
-		}
 		rect(marginX, mainButtonsY, buttonWidth, buttonHeight);
-		if (suppliers){
-			noFill();
-		}
-		else {
-			fill(0, 0, 30);
-		}
 		rect(marginX + 10 + buttonWidth, mainButtonsY, buttonWidth, buttonHeight);
 		noStroke();
 		fill(0, 0, 100);
 		textAlign(CENTER);
 		text("SUPPLIERS", marginX + buttonWidth / 2, mainButtonsY + 5 + buttonHeight / 2);
 		text("CUSTOMERS", marginX + buttonWidth / 2 + 10 + buttonWidth, mainButtonsY + 5 + buttonHeight / 2);
+
+		// Secondary buttons
+		fill(0, 0, 30);
+		noStroke();
+		rect(marginX + (buttonWidth + 10) * secondaryPosition, secondaryButtonsY, buttonWidth, buttonHeight);
+		noFill();
+		stroke(0, 0, 100);
+		strokeWeight(1);
+		for (var i = 0; i < 3; i++){
+			rect(marginX + (buttonWidth + 10) * i, secondaryButtonsY, buttonWidth, buttonHeight);
+		}
+		noStroke();
+		fill(0, 0, 100);
+		textAlign(CENTER);
+		text("MARKET CAP", marginX + buttonWidth / 2, secondaryButtonsY + 5 + buttonHeight / 2);
+		text("PERCENT COST", marginX + buttonWidth / 2 + 10 + buttonWidth, secondaryButtonsY + 5 + buttonHeight / 2);
+		text("PERCENT REVENUE", marginX + buttonWidth / 2 + 20 + buttonWidth * 2, secondaryButtonsY + 5 + buttonHeight / 2);
 	}
 
 	function draw(){
@@ -120,7 +139,6 @@
 	function calculateValues(){
 		maxValue = 0;
 		if (suppliers){
-			// Calculate maximum value
 			for (var i = 1; i < suppliersTable.getRowCount(); i++) {
 				if (suppliersTable.getColumn(4)[i] != 'N/A'){
 					maxValue = max(suppliersTable.getColumn(4)[i], maxValue);
@@ -128,8 +146,6 @@
 				else {
 				}
 			};
-
-			// Calculate initial draw values
 			for (var i = 1; i < suppliersTable.getRowCount(); i++) {
 				drawValues[i-1] = map(suppliersTable.getColumn(4)[i], 0, maxValue, 0, maxRectLength);
 				drawNames[i-1] = suppliersTable.getColumn(1)[i];
@@ -137,7 +153,6 @@
 			};
 		}
 		else {
-			// Calculate maximum value
 			for (var i = 1; i < customersTable.getRowCount(); i++) {
 				if (customersTable.getColumn(4)[i] != 'N/A'){
 					maxValue = max(customersTable.getColumn(4)[i], maxValue);
@@ -145,8 +160,6 @@
 				else {
 				}
 			};
-
-			// Calculate initial draw values
 			for (var i = 1; i < customersTable.getRowCount(); i++) {
 				drawValues[i-1] = map(customersTable.getColumn(4)[i], 0, maxValue, 0, maxRectLength);
 				drawNames[i-1] = customersTable.getColumn(1)[i];
@@ -166,10 +179,25 @@
 			calculateValues();
 			console.log('customers');
 		}
+		if (marginX < mouseX && mouseX < marginX + buttonWidth && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight){
+			secondaryPosition = 0;
+			calculateValues();
+			console.log('market cap');
+		}
+		if (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 10 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight){
+			secondaryPosition = 1;
+			calculateValues();
+			console.log('percent cost');
+		}
+		if (marginX + buttonWidth * 2 + 20 < mouseX && mouseX < marginX + buttonWidth * 3 + 20 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight){
+			secondaryPosition = 2;
+			calculateValues();
+			console.log('percent revenue');
+		}
 	}
 
 	function checkHover(){
-		if ((marginX < mouseX && mouseX < marginX + buttonWidth && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight) || (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 20 && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight)){
+		if ((marginX < mouseX && mouseX < marginX + buttonWidth && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight) || (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 20 && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight) || (marginX < mouseX && mouseX < marginX + buttonWidth && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 10 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX + buttonWidth * 2 + 20 < mouseX && mouseX < marginX + buttonWidth * 3 + 20 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight)){
 			cursor(HAND);
 		}
 		else {
