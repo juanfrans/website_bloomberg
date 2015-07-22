@@ -130,12 +130,17 @@
 		for (var i = 0; i < 3; i++){
 			rect(marginX + secondaryButtonsX + (buttonWidth + 10) * i, secondaryButtonsY, buttonWidth, buttonHeight);
 		}
+		/* for (var i = 0; i < 2; i++){
+			rect(610 + (buttonWidth + 10) * i, secondaryButtonsY, buttonWidth, buttonHeight);
+		} */
 		noStroke();
 		fill(0, 0, 100);
 		textAlign(CENTER);
 		text("MARKET CAP", marginX + secondaryButtonsX + buttonWidth / 2, secondaryButtonsY + 5 + buttonHeight / 2);
 		text("PERCENT COST", marginX + secondaryButtonsX + buttonWidth / 2 + 10 + buttonWidth, secondaryButtonsY + 5 + buttonHeight / 2);
 		text("PERCENT REVENUE", marginX + secondaryButtonsX + buttonWidth / 2 + 20 + buttonWidth * 2, secondaryButtonsY + 5 + buttonHeight / 2);
+		//text("INDUSTRY GROUP", 610 + buttonWidth / 2, secondaryButtonsY + 5 + buttonHeight / 2);
+		//text("COUNTRY", 610 + buttonWidth + 10 + buttonWidth / 2, secondaryButtonsY + 5 + buttonHeight / 2);
 	}
 
 	function draw(){
