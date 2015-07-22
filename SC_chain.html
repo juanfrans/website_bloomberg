@@ -26,20 +26,25 @@
 	var drawNames = [];
 	var drawNumbers = [];
 	var spaceBetween = 15;
-	var startDataY = 100;
 	var marginX = 20;
 	var buttonWidth = 100;
 	var buttonHeight = 25;
 	var suppliers = true;
-	var mainButtonsY = 20;
 	var secondaryPosition = 0;
-	var secondaryButtonsY = 50;
 	var selectedCompany = 0;
 	var marketCap = [];
 	var percentCost = [];
 	var percentRevenue = [];
 	var country = [];
 	var industry = [];
+	var mainSubtitlesY = 140;
+	var startDataY = mainSubtitlesY + 115;
+	var mainButtonsY = mainSubtitlesY + 45;
+	var secondaryButtonsY = mainSubtitlesY + 45;
+	var secondaryButtonsX = 240;
+	var appleY = mainSubtitlesY + 23;
+	var line1Y = 95;
+	var line2Y = 210;
 
 	function preload(){
 		console.log('Starting the loading process...')
@@ -53,7 +58,6 @@
 	}
 
 	function setup(){
-		console.log('Starting the setup...');
 		createCanvas(WIDTH, HEIGHT);
 		colorMode(HSB, 360, 100, 100, 100);
 		textFont("din-condensed-web")
@@ -100,39 +104,70 @@
 		noStroke();
 		fill(0, 0, 100);
 		textAlign(CENTER);
+		textSize(12);
 		text("SUPPLIERS", marginX + buttonWidth / 2, mainButtonsY + 5 + buttonHeight / 2);
 		text("CUSTOMERS", marginX + buttonWidth / 2 + 10 + buttonWidth, mainButtonsY + 5 + buttonHeight / 2);
 
 		// Secondary buttons
 		fill(0, 0, 30);
 		noStroke();
-		rect(marginX + (buttonWidth + 10) * secondaryPosition, secondaryButtonsY, buttonWidth, buttonHeight);
+		rect(marginX + secondaryButtonsX + (buttonWidth + 10) * secondaryPosition, secondaryButtonsY, buttonWidth, buttonHeight);
 		noFill();
 		stroke(0, 0, 100);
 		strokeWeight(1);
 		for (var i = 0; i < 3; i++){
-			rect(marginX + (buttonWidth + 10) * i, secondaryButtonsY, buttonWidth, buttonHeight);
+			rect(marginX + secondaryButtonsX + (buttonWidth + 10) * i, secondaryButtonsY, buttonWidth, buttonHeight);
 		}
 		noStroke();
 		fill(0, 0, 100);
 		textAlign(CENTER);
-		text("MARKET CAP", marginX + buttonWidth / 2, secondaryButtonsY + 5 + buttonHeight / 2);
-		text("PERCENT COST", marginX + buttonWidth / 2 + 10 + buttonWidth, secondaryButtonsY + 5 + buttonHeight / 2);
-		text("PERCENT REVENUE", marginX + buttonWidth / 2 + 20 + buttonWidth * 2, secondaryButtonsY + 5 + buttonHeight / 2);
+		text("MARKET CAP", marginX + secondaryButtonsX + buttonWidth / 2, secondaryButtonsY + 5 + buttonHeight / 2);
+		text("PERCENT COST", marginX + secondaryButtonsX + buttonWidth / 2 + 10 + buttonWidth, secondaryButtonsY + 5 + buttonHeight / 2);
+		text("PERCENT REVENUE", marginX + secondaryButtonsX + buttonWidth / 2 + 20 + buttonWidth * 2, secondaryButtonsY + 5 + buttonHeight / 2);
 	}
 
 	function draw(){
 		background(360, 0, 20);
+		drawTitles();
 		drawButtons();
 		checkHover();
-		drawMainGraph();
 		selectCompany();
+		drawMainGraph();
+	}
+
+	function drawTitles(){
+		fill(0, 0, 100);
+		noStroke();
+		textSize(24);
+		text('SUPPLY CHAIN', marginX, marginX);
+		text('Apple Inc.', marginX, appleY);
+		text('AAPL', marginX + 120, appleY);
+		text('United States', marginX + 200, appleY);
+		text('Technology Hardware & Equipm', marginX + 350, appleY);
+		text('729.35 Billions', marginX + 650, appleY);
+		textSize(14);
+		var description = "A company's revenue is dependent on many factors, including the economic, business and financial relationships between it and its suppliers and customers. This visualization allows you to explore the 'Supply Chain' between Apple Inc. (AAPL) and its 100 largest suppliers and customers. Use the buttons below to select between customers and suppliers and to sort the data by different metrics. Click on the individual companies to bring up their detailed information."
+		var credits = "Visualization created by Juan Francisco Saldarriaga for Bloomberg L.P."
+		text(description, marginX, marginX + 8, 800, 200);
+		text(credits, marginX, marginX + 74);
+		textSize(12);
+		text('Company', marginX, mainSubtitlesY);
+		text('Ticker', marginX + 120, mainSubtitlesY);
+		text('Country', marginX + 200, mainSubtitlesY);
+		text('Industry', marginX + 350, mainSubtitlesY);
+		text('Market Cap', marginX + 650, mainSubtitlesY);
+		noFill();
+		strokeWeight(0.5);
+		stroke(0, 0, 50);
+		line(marginX, marginX + line1Y, WIDTH, marginX + line1Y);
+		line(marginX, marginX + line2Y, WIDTH, marginX + line2Y);
 	}
 
 	function selectCompany(){
-		noFill();
-		stroke(0, 0, 100);
-		strokeWeight(1);
+		//noFill();
+		//stroke(0, 0, 100);
+		//strokeWeight(1);
+		fill(0, 0, 30);
 		rect(marginX, startDataY - 4 + selectedCompany * spaceBetween, marginX + maxRectLength + 105, rectHeight + 7);
 		fill(0, 0, 100);
 		noStroke();
@@ -331,19 +366,19 @@
 			selectedCompany = 0;
 			console.log('customers');
 		}
-		if (marginX < mouseX && mouseX < marginX + buttonWidth && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight){
+		if (marginX + secondaryButtonsX < mouseX && mouseX < marginX + secondaryButtonsX + buttonWidth && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight){
 			secondaryPosition = 0;
 			calculateValues();
 			selectedCompany = 0;
 			console.log('market cap');
 		}
-		if (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 10 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight){
+		if (marginX + secondaryButtonsX + buttonWidth + 10 < mouseX && mouseX < marginX + secondaryButtonsX + buttonWidth * 2 + 10 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight){
 			secondaryPosition = 1;
 			calculateValues();
 			selectedCompany = 0;
 			console.log('percent cost');
 		}
-		if (marginX + buttonWidth * 2 + 20 < mouseX && mouseX < marginX + buttonWidth * 3 + 20 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight){
+		if (marginX + secondaryButtonsX + buttonWidth * 2 + 20 < mouseX && mouseX < marginX + secondaryButtonsX + buttonWidth * 3 + 20 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight){
 			secondaryPosition = 2;
 			calculateValues();
 			selectedCompany = 0;
@@ -355,7 +390,7 @@
 	}
 
 	function checkHover(){
-		if ((marginX < mouseX && mouseX < marginX + buttonWidth && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight) || (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 20 && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight) || (marginX < mouseX && mouseX < marginX + buttonWidth && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 10 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX + buttonWidth * 2 + 20 < mouseX && mouseX < marginX + buttonWidth * 3 + 20 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX < mouseX && mouseX < marginX + marginX + maxRectLength + 105 && startDataY - 4 < mouseY && mouseY < startDataY + spaceBetween * 100)){
+		if ((marginX < mouseX && mouseX < marginX + buttonWidth && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight) || (marginX + buttonWidth + 10 < mouseX && mouseX < marginX + buttonWidth * 2 + 20 && mainButtonsY < mouseY && mouseY < mainButtonsY + buttonHeight) || (marginX + secondaryButtonsX < mouseX && mouseX < marginX + secondaryButtonsX + buttonWidth && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX + secondaryButtonsX + buttonWidth + 10 < mouseX && mouseX < marginX + secondaryButtonsX + buttonWidth * 2 + 10 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX + secondaryButtonsX + buttonWidth * 2 + 20 < mouseX && mouseX < marginX + secondaryButtonsX + buttonWidth * 3 + 20 && secondaryButtonsY < mouseY && mouseY < secondaryButtonsY + buttonHeight) || (marginX < mouseX && mouseX < marginX + marginX + maxRectLength + 105 && startDataY - 4 < mouseY && mouseY < startDataY + spaceBetween * 100)){
 			cursor(HAND);
 		}
 		else {
